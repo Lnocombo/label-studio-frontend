@@ -26,6 +26,7 @@
     }
   ],
   "scripts": {
+    "build-ci": "NODE_ENV=production yarn build:module && cp -r build/static/* ../label-studio/label_studio/frontend/dist/lsf",
     "build-bundle": "yarn run build:final",
     "build-notsourcemap": "GENERATE_SOURCEMAP=false yarn run build",
     "build:final": "BUILD_NO_CHUNKS=true yarn run build",

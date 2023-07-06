@@ -8,6 +8,7 @@ import { Block, Elem } from '../../../utils/bem';
 import { NodeIcon } from '../../Node/Node';
 import { LockButton } from '../Components/LockButton';
 import { RegionLabels } from './RegionLabels';
+import { LabelCanvas } from './LabelCanvas';
 
 interface RegionItemProps {
   region: any;
@@ -27,8 +28,17 @@ export const RegionItem: FC<RegionItemProps> = observer(({
   metaDetails: MetaDetails,
 }) => {
   const { annotation } = region;
-  const { selectedRegions: nodes } = annotation;
+  const { selectedRegions: nodes, versions } = annotation;
+  const { result = [] } = versions;
   const [editMode, setEditMode] = useState(false);
+  const selectedLabel = useMemo(() => {
+    let item = result.find((v:any) => v.id == region.cleanId);
+    if(item) {
+      region.bboxCoords && (item.bboxCoords = region.bboxCoords)
+      region.bboxCoordsCanvas && (item.bboxCoordsCanvas = region.bboxCoordsCanvas)
+    }
+    return item;
+  }, [result, region]);
 
   const hasEditableRegions = useMemo(() => {
     return !!nodes.find((node: any) => !node.isReadOnly() && !node.classification);
@@ -75,6 +85,14 @@ export const RegionItem: FC<RegionItemProps> = observer(({
           />
         </Elem>
       )}
+      {
+        selectedLabel && (
+          <LabelCanvas 
+            imgData={region.object.imageRef} 
+            labelData={selectedLabel}
+          ></LabelCanvas>
+        )
+      }
     </Block>
   );
 });
