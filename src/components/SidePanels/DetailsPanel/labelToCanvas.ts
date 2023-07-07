@@ -29,19 +29,31 @@ function getBoundRect(points: Array<Cooordinate>) {
     }
 }
 
-// 获取canvas中label的包围盒坐标
-function getLabelBoundRect(originW: number, originH: number, points: Array<Cooordinate>) {
+// 获取canvas中Plogon的包围盒坐标
+function getPolygonbbox(originW: number, originH: number, points: Array<Cooordinate>) {
     const { xFactor, yFactor } = getNormalizeFactor(originW, originH);
     const { left, top, right, bottom, width, height } = getBoundRect(points);
     return {
         left: left * xFactor,
-        top: top * yFactor,
         right: right * xFactor,
+        top: top * yFactor,
         bottom: bottom * yFactor,
         width: width * xFactor,
         height: height * yFactor
     }
+}
 
+// 获取canvas中矩形的包围盒坐标
+function getRectbbox(originW: number, originH: number, bbox: any) {
+    const { xFactor, yFactor } = getNormalizeFactor(originW, originH);
+    return {
+        left: bbox.left * xFactor,
+        righ: bbox.right * xFactor,
+        top: bbox.top * yFactor,
+        bottom: bbox.bottom * yFactor,
+        width: (bbox.right - bbox.left) * xFactor,
+        height: (bbox.bottom - bbox.top) * yFactor,
+    }
 }
 
 // 创建HTMLImageElement
@@ -82,9 +94,9 @@ function createCavans(data: HTMLElement, sx: number, sy: number, sw: number, sh:
     };
 }
 
-// 使用ImageElement生成Canvas
-function getCavnas(imgEL: any, width: number, height: number, points: Array<Cooordinate>) {
-    const { left: x, top: y, width: w, height: h } = getLabelBoundRect(width, height, points);
+// 使用ImageElement生成Canvas，
+function getCavnas(imgEL: any, width: number, height: number, bbox: any) {
+    const { left: x, top: y, width: w, height: h } = getRectbbox(width, height, bbox);
     return createCavans(
         imgEL,
         x, y, w, h,
@@ -115,7 +127,6 @@ async function requestTransform(url: string, data: JSON): Promise<any> {
 export {
     createImg,
     createCavans,
-    getLabelBoundRect,
     getCavnas,
     requestTransform,
 }
